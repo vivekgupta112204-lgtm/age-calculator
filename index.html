@@ -7,6 +7,7 @@
     <title>Age Calculator - Exact Age by Date of Birth</title>
     <meta name="description" content="Calculate your exact age in years, months, days, and seconds instantly. Free, fast, and accurate Age Calculator for resumes and visas. Check it now!" />
     <meta name="keywords" content="age calculator, calculate my age, exact age calculator, birthday calculator, how old am I, zodiac sign calculator" />
+    <meta name="google-site-verification" content="t6T2ZFjIwvfsfMBy9Py8VZfA28y-KQ3fJomsayelyvs" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -49,55 +50,75 @@
           margin: 0 auto;
           line-height: 1.8;
           color: #334155; /* Slate 700 */
+          font-size: 1.05rem;
       }
       .dark .content-container {
           color: #cbd5e1; /* Slate 300 */
       }
       .content-container h2 {
-          color: #2c3e50; /* Navy Blue */
-          margin-top: 40px;
-          margin-bottom: 20px;
-          font-size: 1.8rem;
-          font-weight: 700;
+          color: #1e293b; /* Navy Blue tone */
+          margin-top: 48px;
+          margin-bottom: 24px;
+          font-size: 2rem;
+          font-weight: 800;
+          letter-spacing: -0.025em;
       }
       .dark .content-container h2 {
-          color: #e2e8f0;
-      }
-      .content-container h3 {
-          color: #34495e;
-          margin-top: 30px;
-          margin-bottom: 15px;
-          font-size: 1.4rem;
-          font-weight: 600;
-      }
-      .dark .content-container h3 {
           color: #f1f5f9;
       }
+      .content-container h3 {
+          color: #334155;
+          margin-top: 36px;
+          margin-bottom: 16px;
+          font-size: 1.5rem;
+          font-weight: 700;
+      }
+      .dark .content-container h3 {
+          color: #e2e8f0;
+      }
+      .content-container p {
+          margin-bottom: 24px;
+      }
       .content-container ul, .content-container ol {
-          margin-bottom: 25px;
-          padding-left: 20px;
-          list-style-position: outside;
+          margin-bottom: 32px;
+          padding-left: 24px;
       }
       .content-container li {
-          margin-bottom: 10px;
+          margin-bottom: 12px;
+          padding-left: 8px;
       }
+      .content-container ul {
+          list-style-type: disc;
+      }
+      .content-container ol {
+          list-style-type: decimal;
+      }
+      .content-container li::marker {
+          color: #3b82f6; /* Primary 500 */
+          font-weight: bold;
+      }
+
+      /* Fun Facts Box */
       .fun-facts-box {
-          background-color: #e0f7fa;
-          border-radius: 12px;
-          padding: 30px;
-          border-left: 6px solid #00bcd4;
-          margin: 40px 0;
+          background-color: #f0f9ff; /* Light Blue 50 */
+          border-radius: 16px;
+          padding: 32px;
+          border: 1px solid #bae6fd;
+          border-left: 6px solid #0ea5e9; /* Sky 500 */
+          margin: 48px 0;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
       }
       .dark .fun-facts-box {
-          background-color: #164e63; /* Cyan 900 */
-          border-left-color: #06b6d4;
+          background-color: #0f172a; /* Slate 900 */
+          border-color: #1e293b;
+          border-left-color: #38bdf8;
       }
       .fun-facts-box h3 {
           margin-top: 0;
-          color: #006064; /* Cyan 900 */
+          color: #0c4a6e; /* Sky 900 */
       }
       .dark .fun-facts-box h3 {
-          color: #cffafe; /* Cyan 100 */
+          color: #e0f2fe; /* Sky 100 */
       }
     </style>
 <script type="importmap">
@@ -358,7 +379,7 @@
               </p>
 
               <h3>Key Features</h3>
-              <ul class="list-disc">
+              <ul>
                   <li><strong>Leap Year Accuracy:</strong> We correctly account for the extra day in February every four years (mostly), ensuring your day count is never off.</li>
                   <li><strong>Time Zone Support:</strong> By using your local system time, we ensure the calculation is relevant to your current geographical location.</li>
                   <li><strong>Instant Calculation:</strong> No page reloads or waiting. The result appears instantly as you type or select dates.</li>
@@ -374,7 +395,7 @@
                   <em>Birth Date:</em> January 1, 2000<br>
                   <em>Current Date:</em> May 20, 2026
               </p>
-              <ol class="list-decimal">
+              <ol>
                   <li><strong>Step 1: Calculate Days</strong><br>
                   Subtract birth day (1) from current day (20).<br>
                   Result: 19 Days. (If current day were smaller, you would borrow 30 or 31 days from the current month).</li>
@@ -402,7 +423,7 @@
 
               <div class="fun-facts-box">
                   <h3>Did You Know? Fun Facts About Time</h3>
-                  <ul class="list-none pl-0">
+                  <ul style="list-style: none; padding-left: 0;">
                       <li>🕒 <strong>The 10,000 Day Club:</strong> You cross the 10,000-day milestone shortly after turning 27 years old.</li>
                       <li>🌏 <strong>Time Perception:</strong> As we age, our perception of time speeds up. One year represents 10% of a 10-year-old's life but only 2% of a 50-year-old's life.</li>
                       <li>🎂 <strong>Golden Birthday:</strong> This occurs when you turn the age of your birth day (e.g., turning 25 on the 25th of the month).</li>
