@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Updated Favicon to a data URI so it loads instantly without external files -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Age Calculator - Exact Age by Date of Birth</title>
@@ -35,6 +34,14 @@
       .hidden { display: none; }
       .fade-in { animation: fadeIn 0.5s ease-out forwards; }
       @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      
+      /* Mobile Menu Animation */
+      #mobile-menu { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
+      #mobile-menu.open { max-height: 400px; opacity: 1; }
+      
+      /* Accordion Animation */
+      details > summary { list-style: none; }
+      details > summary::-webkit-details-marker { display: none; }
     </style>
 <script type="importmap">
 {
@@ -46,274 +53,441 @@
 }
 </script>
 </head>
-  <body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+  <body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-200 flex flex-col min-h-screen">
     
-    <div class="min-h-screen flex flex-col items-center py-6 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto">
+    <!-- STICKY HEADER -->
+    <header class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-slate-200 dark:border-slate-800">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                    <div class="bg-primary-600 text-white p-1.5 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white">Age Calculator</span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="index.html" class="text-primary-600 dark:text-primary-400 font-medium hover:text-primary-700 transition">Home</a>
+                    <a href="about.html" class="text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition">About Us</a>
+                    <a href="contact.html" class="text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition">Contact Us</a>
+                    <!-- Dark Mode Toggle -->
+                    <button id="theme-toggle" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                        <svg id="icon-sun" class="hidden w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                        <svg id="icon-moon" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex md:hidden items-center gap-4">
+                    <button id="mobile-theme-toggle" class="p-2 text-slate-600 dark:text-slate-300">
+                         <svg class="w-5 h-5 sun-icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                         <svg class="w-5 h-5 moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                    </button>
+                    <button id="hamburger-btn" class="text-slate-600 dark:text-slate-300 hover:text-primary-600 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block px-3 py-2 rounded-md text-base font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-slate-800">Home</a>
+                <a href="about.html" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 hover:bg-slate-50 dark:hover:bg-slate-800">About Us</a>
+                <a href="contact.html" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 hover:bg-slate-50 dark:hover:bg-slate-800">Contact Us</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex-grow py-6 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
       
-      <!-- Header Section -->
-      <header class="w-full flex justify-between items-center mb-8">
-        <a href="index.html" class="flex items-center gap-3 group">
-            <!-- Custom CSS Logo -->
-            <div class="relative w-12 h-12 flex-shrink-0 cursor-pointer">
-                <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg transform rotate-3 transition-transform group-hover:rotate-6"></div>
-                <div class="absolute inset-0 bg-white dark:bg-slate-800 rounded-xl shadow-inner flex items-center justify-center z-10 border border-slate-200 dark:border-slate-700">
-                   <svg class="w-7 h-7 text-primary-600 dark:text-primary-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                     <line x1="16" y1="2" x2="16" y2="6"></line>
-                     <line x1="8" y1="2" x2="8" y2="6"></line>
-                     <line x1="3" y1="10" x2="21" y2="10"></line>
-                     <path d="M12 14l2 2 4-4"></path> 
-                   </svg>
-                </div>
-            </div>
-            
-            <div>
-                <h1 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">Age Calculator</h1>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Exact Age & Birthday Stats</p>
-            </div>
-        </a>
-        <button id="theme-toggle" class="p-2 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors" aria-label="Toggle Dark Mode">
-            <!-- Icons handled by JS -->
-            <svg id="icon-sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-            <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-        </button>
-      </header>
-
-      <main class="w-full space-y-6">
+      <main class="w-full space-y-8">
         
-        <!-- Intro Text -->
-        <div id="intro-text" class="text-center mb-6">
-            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white mb-2">
-                How old are you, exactly?
-            </h2>
-            <p class="text-slate-600 dark:text-slate-300">
-                Calculate your exact age in years, months, days, and seconds. Find out your zodiac sign and how long until your next birthday.
-            </p>
-        </div>
-
-        <!-- Input Card -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6">
-          <form id="age-form" class="space-y-5">
-            <!-- Date Input -->
-            <div>
-              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Date of Birth</label>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-                </div>
-                <input type="date" id="dob-input" required class="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all sm:text-sm">
-              </div>
-            </div>
-
-            <!-- Time Input -->
-            <div>
-              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Time of Birth <span class="text-slate-400 font-normal text-xs">(Optional)</span></label>
-              <div class="relative">
-                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                </div>
-                <input type="time" id="tob-input" value="00:00" class="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all sm:text-sm">
-              </div>
-            </div>
-
-            <button type="submit" class="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-primary-500/30 transform transition-all active:scale-[0.98] hover:-translate-y-0.5">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
-              Calculate Age
-            </button>
-          </form>
-        </div>
-
-        <!-- Ad Placeholder Top -->
-        <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-lg flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 border border-slate-300 dark:border-slate-700 border-dashed p-4 min-h-[100px]">
-          <span class="text-xs uppercase tracking-widest font-semibold">Advertisement</span>
-          <span class="text-xs mt-1">Ad Space (Responsive)</span>
-        </div>
-
-        <!-- RESULT SECTION (Hidden by default) -->
-        <div id="result-container" class="hidden space-y-6">
-            
-            <!-- Exact Age Card -->
-            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 border-l-4 border-primary-500 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10">
-                   <svg class="w-24 h-24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v2"/><path d="M12 8v2"/><path d="M17 8v2"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg>
-                </div>
-                
-                <h2 class="text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wide text-sm mb-2">Your Exact Age</h2>
-                <div class="flex flex-wrap items-baseline gap-2 mb-4">
-                    <span id="years-val" class="text-5xl md:text-6xl font-bold text-slate-800 dark:text-white">--</span>
-                    <span class="text-xl text-slate-500 dark:text-slate-400">Years</span>
-                </div>
-                
-                <div class="flex gap-4 text-lg md:text-xl text-slate-700 dark:text-slate-200 font-medium">
-                  <div class="flex items-baseline gap-1">
-                    <span id="months-val" class="font-bold text-primary-600 dark:text-primary-400">--</span>
-                    <span class="text-sm text-slate-500 dark:text-slate-400">Months</span>
-                  </div>
-                  <div class="flex items-baseline gap-1">
-                    <span id="days-val" class="font-bold text-primary-600 dark:text-primary-400">--</span>
-                    <span class="text-sm text-slate-500 dark:text-slate-400">Days</span>
-                  </div>
-                </div>
-
-                <!-- Live Counter -->
-                <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700">
-                   <div class="flex items-center gap-2 mb-2">
-                     <svg class="w-4 h-4 text-primary-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                     <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">Live Counter</span>
-                   </div>
-                   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                     <div class="bg-slate-50 dark:bg-slate-900 rounded p-2">
-                        <div id="total-days-val" class="text-lg font-bold text-slate-800 dark:text-slate-100">0</div>
-                        <div class="text-xs text-slate-500">Days</div>
-                     </div>
-                     <div class="bg-slate-50 dark:bg-slate-900 rounded p-2">
-                        <div id="total-hours-val" class="text-lg font-bold text-slate-800 dark:text-slate-100">0</div>
-                        <div class="text-xs text-slate-500">Hours</div>
-                     </div>
-                     <div class="bg-slate-50 dark:bg-slate-900 rounded p-2">
-                        <div id="total-mins-val" class="text-lg font-bold text-slate-800 dark:text-slate-100">0</div>
-                        <div class="text-xs text-slate-500">Mins</div>
-                     </div>
-                     <div class="bg-primary-50 dark:bg-primary-900/20 rounded p-2 ring-1 ring-primary-100 dark:ring-primary-900">
-                        <div id="total-secs-val" class="text-lg font-bold text-primary-600 dark:text-primary-400 w-[80px] mx-auto tabular-nums">0</div>
-                        <div class="text-xs text-primary-500 dark:text-primary-300">Seconds</div>
-                     </div>
-                   </div>
-                </div>
-
-                <!-- Custom Message Input -->
-                <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
-                    <label for="custom-message" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
-                        Customize Message
-                    </label>
-                    <textarea id="custom-message" rows="2" class="w-full p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all resize-none"></textarea>
-                </div>
-
-                <!-- Buttons -->
-                <div class="mt-4 flex gap-3">
-                  <button id="btn-copy" class="flex-1 flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 py-2 rounded-lg text-sm font-medium transition-colors text-slate-700 dark:text-slate-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                    <span id="btn-copy-text">Copy Age</span>
-                  </button>
-                </div>
-            </div>
-
-            <!-- Birthday Countdown -->
-            <div class="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl shadow-xl p-6 text-white relative overflow-hidden">
-                <div class="absolute -right-6 -bottom-6 opacity-20 rotate-12">
-                    <svg width="120" height="120" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v2"/><path d="M12 8v2"/><path d="M17 8v2"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg>
-                </div>
-                <h3 class="text-purple-100 text-sm font-medium uppercase tracking-wide mb-3 flex items-center gap-2">
-                    <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v2"/><path d="M12 8v2"/><path d="M17 8v2"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg> Next Birthday
-                </h3>
-                <div class="flex justify-between items-end relative z-10">
-                    <div class="text-center">
-                        <span id="nb-days" class="block text-3xl font-bold">0</span>
-                        <span class="text-xs text-purple-200">Days</span>
-                    </div>
-                    <div class="text-center">
-                        <span id="nb-hours" class="block text-3xl font-bold">0</span>
-                        <span class="text-xs text-purple-200">Hrs</span>
-                    </div>
-                    <div class="text-center">
-                        <span id="nb-mins" class="block text-3xl font-bold">0</span>
-                        <span class="text-xs text-purple-200">Mins</span>
-                    </div>
-                    <div class="text-center">
-                        <span id="nb-secs" class="block text-3xl font-bold tabular-nums">0</span>
-                        <span class="text-xs text-purple-200">Secs</span>
-                    </div>
-                </div>
-                <p id="nb-date" class="mt-4 text-sm text-purple-200 text-right">
-                    --
+        <!-- TOOL CONTAINER (Centered Narrow) -->
+        <div class="max-w-2xl mx-auto w-full space-y-6">
+            <!-- Intro Text -->
+            <div id="intro-text" class="text-center mb-6 pt-4">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-3 tracking-tight">
+                    How old are you, <span class="text-primary-600">exactly?</span>
+                </h2>
+                <p class="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Calculate your exact age in years, months, days, and seconds. Find out your zodiac sign and countdown to your next birthday.
                 </p>
             </div>
 
-            <!-- Grid Stats -->
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md flex flex-col items-center justify-center text-center">
-                    <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center mb-2">
-                        <span id="zodiac-symbol" class="text-xl">★</span>
+            <!-- Input Card -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 p-6 sm:p-8">
+            <form id="age-form" class="space-y-6">
+                <!-- Date Input -->
+                <div>
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Date of Birth</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
                     </div>
-                    <span class="text-sm text-slate-500 dark:text-slate-400">Zodiac Sign</span>
-                    <span id="zodiac-name" class="font-bold text-slate-800 dark:text-slate-200">--</span>
+                    <input type="date" id="dob-input" required class="block w-full pl-10 pr-3 py-4 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all text-base sm:text-sm shadow-sm">
                 </div>
-                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md flex flex-col items-center justify-center text-center">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-2">
-                        <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                </div>
+
+                <!-- Time Input -->
+                <div>
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Time of Birth <span class="text-slate-400 font-normal text-xs ml-1">(Optional)</span></label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
-                    <span class="text-sm text-slate-500 dark:text-slate-400">Born On</span>
-                    <span id="born-day" class="font-bold text-slate-800 dark:text-slate-200">--</span>
+                    <input type="time" id="tob-input" value="00:00" class="block w-full pl-10 pr-3 py-4 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all text-base sm:text-sm shadow-sm">
                 </div>
-                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md flex flex-col items-center justify-center text-center">
-                     <span class="text-sm text-slate-500 dark:text-slate-400">Total Weeks</span>
-                     <span id="total-weeks" class="font-bold text-slate-800 dark:text-slate-200 text-lg">0</span>
                 </div>
-                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md flex flex-col items-center justify-center text-center">
-                     <span class="text-sm text-slate-500 dark:text-slate-400">Total Months</span>
-                     <span id="total-months" class="font-bold text-slate-800 dark:text-slate-200 text-lg">0</span>
+
+                <button type="submit" class="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-primary-500/30 transform transition-all active:scale-[0.98] hover:-translate-y-0.5 text-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+                Calculate Age
+                </button>
+            </form>
+            </div>
+
+            <!-- Ad Placeholder Top -->
+            <div class="w-full bg-slate-100 dark:bg-slate-800/50 rounded-lg flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 border-2 border-slate-200 dark:border-slate-700 border-dashed p-4 min-h-[100px]">
+            <span class="text-xs uppercase tracking-widest font-semibold">Advertisement</span>
+            <span class="text-xs mt-1">Responsive Display Ad</span>
+            </div>
+
+            <!-- RESULT SECTION (Hidden by default) -->
+            <div id="result-container" class="hidden space-y-6">
+                
+                <!-- Exact Age Card -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 md:p-8 border-l-4 border-primary-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                    <svg class="w-32 h-32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v2"/><path d="M12 8v2"/><path d="M17 8v2"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg>
+                    </div>
+                    
+                    <h2 class="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wide text-xs mb-3">Your Exact Age</h2>
+                    <div class="flex flex-wrap items-baseline gap-3 mb-6">
+                        <span id="years-val" class="text-6xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight">--</span>
+                        <span class="text-2xl text-slate-500 dark:text-slate-400 font-medium">Years</span>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-6 text-xl md:text-2xl text-slate-700 dark:text-slate-200 font-medium">
+                    <div class="flex items-baseline gap-2">
+                        <span id="months-val" class="font-bold text-primary-600 dark:text-primary-400 text-3xl">--</span>
+                        <span class="text-sm uppercase tracking-wide text-slate-500 dark:text-slate-400">Months</span>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="days-val" class="font-bold text-primary-600 dark:text-primary-400 text-3xl">--</span>
+                        <span class="text-sm uppercase tracking-wide text-slate-500 dark:text-slate-400">Days</span>
+                    </div>
+                    </div>
+
+                    <!-- Live Counter -->
+                    <div class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-700">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                        <span class="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Live Breakdown</span>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div class="bg-slate-50 dark:bg-slate-900 rounded-xl p-3 border border-slate-100 dark:border-slate-700">
+                            <div id="total-days-val" class="text-xl font-bold text-slate-800 dark:text-slate-100">0</div>
+                            <div class="text-xs text-slate-500 font-medium uppercase mt-1">Days</div>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-900 rounded-xl p-3 border border-slate-100 dark:border-slate-700">
+                            <div id="total-hours-val" class="text-xl font-bold text-slate-800 dark:text-slate-100">0</div>
+                            <div class="text-xs text-slate-500 font-medium uppercase mt-1">Hours</div>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-900 rounded-xl p-3 border border-slate-100 dark:border-slate-700">
+                            <div id="total-mins-val" class="text-xl font-bold text-slate-800 dark:text-slate-100">0</div>
+                            <div class="text-xs text-slate-500 font-medium uppercase mt-1">Mins</div>
+                        </div>
+                        <div class="bg-primary-50 dark:bg-primary-900/20 rounded-xl p-3 border border-primary-100 dark:border-primary-800">
+                            <div id="total-secs-val" class="text-xl font-bold text-primary-600 dark:text-primary-400 tabular-nums">0</div>
+                            <div class="text-xs text-primary-600 dark:text-primary-400 font-medium uppercase mt-1">Seconds</div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- Custom Message Input -->
+                    <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700">
+                        <label for="custom-message" class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                            Share Your Age
+                        </label>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                             <textarea id="custom-message" rows="1" class="flex-grow p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all resize-none h-12 pt-3"></textarea>
+                             <button id="btn-copy" class="flex-shrink-0 flex items-center justify-center gap-2 bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white py-2 px-6 rounded-xl text-sm font-bold transition-colors h-12">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Birthday Countdown -->
+                <div class="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-2xl shadow-xl p-6 md:p-8 text-white relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 opacity-20 rotate-12">
+                        <svg width="150" height="150" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v2"/><path d="M12 8v2"/><path d="M17 8v2"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg>
+                    </div>
+                    <h3 class="text-blue-100 text-sm font-bold uppercase tracking-wider mb-6 flex items-center gap-2">
+                        Next Birthday Countdown
+                    </h3>
+                    <div class="grid grid-cols-4 gap-2 relative z-10">
+                        <div class="text-center bg-white/10 rounded-lg p-2 backdrop-blur-sm">
+                            <span id="nb-days" class="block text-2xl md:text-3xl font-bold">0</span>
+                            <span class="text-[10px] md:text-xs text-blue-100 uppercase">Days</span>
+                        </div>
+                        <div class="text-center bg-white/10 rounded-lg p-2 backdrop-blur-sm">
+                            <span id="nb-hours" class="block text-2xl md:text-3xl font-bold">0</span>
+                            <span class="text-[10px] md:text-xs text-blue-100 uppercase">Hrs</span>
+                        </div>
+                        <div class="text-center bg-white/10 rounded-lg p-2 backdrop-blur-sm">
+                            <span id="nb-mins" class="block text-2xl md:text-3xl font-bold">0</span>
+                            <span class="text-[10px] md:text-xs text-blue-100 uppercase">Mins</span>
+                        </div>
+                        <div class="text-center bg-white/10 rounded-lg p-2 backdrop-blur-sm">
+                            <span id="nb-secs" class="block text-2xl md:text-3xl font-bold tabular-nums">0</span>
+                            <span class="text-[10px] md:text-xs text-blue-100 uppercase">Secs</span>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-between items-center relative z-10">
+                        <span class="text-sm text-blue-200">Date:</span>
+                        <p id="nb-date" class="text-lg font-semibold text-white">--</p>
+                    </div>
+                </div>
+
+                <!-- Grid Stats -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center mb-3">
+                            <span id="zodiac-symbol" class="text-2xl">★</span>
+                        </div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Zodiac Sign</span>
+                        <span id="zodiac-name" class="font-bold text-slate-800 dark:text-slate-200 text-lg">--</span>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3">
+                            <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Born On</span>
+                        <span id="born-day" class="font-bold text-slate-800 dark:text-slate-200 text-lg">--</span>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Total Weeks</span>
+                        <span id="total-weeks" class="font-extrabold text-slate-900 dark:text-white text-2xl">0</span>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Total Months</span>
+                        <span id="total-months" class="font-extrabold text-slate-900 dark:text-white text-2xl">0</span>
+                    </div>
+                </div>
+
+                <!-- Bottom Ad Placeholder -->
+                <div class="w-full bg-slate-100 dark:bg-slate-800/50 rounded-lg flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 border-2 border-slate-200 dark:border-slate-700 border-dashed p-4 min-h-[100px]">
+                <span class="text-xs uppercase tracking-widest font-semibold">Advertisement</span>
+                <span class="text-xs mt-1">Bottom Ad Unit</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEO LONG FORM CONTENT (For High Value Page Rank) -->
+        <article id="seo-content" class="mt-24 pt-16 border-t border-slate-200 dark:border-slate-800 prose prose-slate dark:prose-invert max-w-3xl mx-auto px-4 sm:px-0">
+            <!-- Introduction -->
+            <div class="mb-12 text-center">
+                <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-4">The Ultimate Guide to Chronological Age Calculation</h2>
+                <p class="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Time is one of the most constant yet elusive concepts in our lives. While we all know our birthday, understanding our precise position in time—down to the exact second—offers a fascinating perspective on our existence. Most of us answer the question "How old are you?" with a simple integer like "25" or "30." However, your <strong>chronological age</strong> is a continuously ticking metric. This <strong>Age Calculator by Date of Birth</strong> goes beyond the simple year count to provide a highly accurate breakdown of your time on Earth, factoring in leap years, specific month lengths, and time zones.
+                </p>
+            </div>
+
+            <!-- The Math -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">The "Math" Behind the Magic: How We Calculate Your Age</h2>
+                <p class="mb-4 text-slate-600 dark:text-slate-300">
+                    Calculating age seems simple: <em>Current Year - Birth Year</em>. But manually calculating your <strong>exact age</strong> is surprisingly complex due to the irregularities of the Gregorian calendar.
+                </p>
+                <ul class="list-disc pl-5 space-y-2 text-slate-600 dark:text-slate-300">
+                    <li><strong>Leap Years:</strong> Every four years (mostly), an extra day is added to February. If you’ve lived through 5 leap years, you’ve lived 5 extra days that a simple subtraction would miss.</li>
+                    <li><strong>Variable Month Lengths:</strong> Months oscillate between 30 and 31 days (with February being the outlier). Accurate calculation requires knowing exactly how many days were in the specific months since your last birthday.</li>
+                    <li><strong>Time Zones:</strong> Your age technically changes based on where you are on the globe relative to your birth place. Our tool uses your local system time to ensure the calculation is relevant to your current experience.</li>
+                </ul>
+            </div>
+
+            <!-- Step by Step -->
+            <div class="bg-blue-50 dark:bg-blue-900/20 p-8 rounded-2xl mb-12 not-prose">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">How to Use This Tool for Maximum Accuracy</h2>
+                <ol class="space-y-4">
+                    <li class="flex items-start">
+                        <span class="flex-shrink-0 w-6 h-6 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-bold mt-0.5 mr-3">1</span>
+                        <span class="text-slate-700 dark:text-slate-200"><strong>Enter Your Date of Birth:</strong> Select the exact day, month, and year from the calendar picker above.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="flex-shrink-0 w-6 h-6 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-bold mt-0.5 mr-3">2</span>
+                        <span class="text-slate-700 dark:text-slate-200"><strong>Add Time of Birth (Optional):</strong> For the "Live Seconds Counter" to be precise, knowing your birth time is crucial. If unknown, the tool defaults to 12:00 AM.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="flex-shrink-0 w-6 h-6 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-bold mt-0.5 mr-3">3</span>
+                        <span class="text-slate-700 dark:text-slate-200"><strong>Click Calculate:</strong> Instantly process the data.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="flex-shrink-0 w-6 h-6 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-bold mt-0.5 mr-3">4</span>
+                        <span class="text-slate-700 dark:text-slate-200"><strong>Review Your Stats:</strong> Scroll down to see your age in years, months, weeks, days, and even seconds.</span>
+                    </li>
+                </ol>
+            </div>
+
+            <!-- Use Cases -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">5 Real-Life Scenarios Where Exact Age Matters</h2>
+                <div class="grid md:grid-cols-2 gap-6 not-prose">
+                    <div class="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-2">Government Exams & Visas</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-300">Many official applications have strict age limits (e.g., "Must be under 25 years and 0 days"). A manual error here can lead to rejection.</p>
+                    </div>
+                    <div class="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-2">Medical Prescriptions</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-300">For infants and toddlers, doctors often require age in exact months or weeks to calculate safe medication dosages.</p>
+                    </div>
+                    <div class="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-2">Astrology & Horoscopes</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-300">Your Zodiac sign and planetary chart depend heavily on the specific time and date of your birth.</p>
+                    </div>
+                    <div class="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-2">Retirement Planning</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-300">Financial independence is often a numbers game. Knowing exactly how many days are left until your target retirement age helps in visualizing the goal.</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Bottom Ad Placeholder -->
-            <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-lg flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 border border-slate-300 dark:border-slate-700 border-dashed p-4 min-h-[100px]">
-              <span class="text-xs uppercase tracking-widest font-semibold">Advertisement</span>
-              <span class="text-xs mt-1">Bottom Ad Unit</span>
+            <!-- Interesting Facts -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Did You Know? Fascinating Age Facts</h2>
+                <div class="bg-slate-100 dark:bg-slate-800 p-6 rounded-xl border-l-4 border-primary-500">
+                    <p class="mb-4 text-slate-700 dark:text-slate-300">
+                        <strong>The 10,000 Day Club:</strong> Did you know you turn 10,000 days old shortly after your 27th birthday? (Specifically, 27 years and roughly 4.5 months). It’s a fun milestone many people miss!
+                    </p>
+                    <p class="text-slate-700 dark:text-slate-300">
+                        <strong>Korean Age vs. International Age:</strong> Historically, South Koreans added one year at birth and another on New Year's Day. A baby born on December 31st would be considered "2 years old" the next day! (Note: Korea officially adopted the international system in 2023).
+                    </p>
+                </div>
             </div>
-        </div>
+
+            <!-- FAQ -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">Frequently Asked Questions</h2>
+                <div class="space-y-4 not-prose">
+                    <details class="group bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer">
+                        <summary class="flex justify-between items-center font-bold text-slate-900 dark:text-white">
+                            <span>Does this calculator account for Leap Years?</span>
+                            <span class="transform transition-transform group-open:rotate-180">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </span>
+                        </summary>
+                        <p class="text-slate-600 dark:text-slate-300 mt-4 leading-relaxed">
+                            Yes, absolutely. Our algorithm specifically checks for leap years (years divisible by 4, except for end-of-century years unless divisible by 400) to ensure the day count is precise.
+                        </p>
+                    </details>
+                    <details class="group bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer">
+                        <summary class="flex justify-between items-center font-bold text-slate-900 dark:text-white">
+                            <span>What is my age in Dog Years?</span>
+                            <span class="transform transition-transform group-open:rotate-180">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </span>
+                        </summary>
+                        <p class="text-slate-600 dark:text-slate-300 mt-4 leading-relaxed">
+                            The old rule was "multiply by 7," but modern science suggests the first year of a dog's life equals about 15 human years! Our tool currently focuses on human chronological age.
+                        </p>
+                    </details>
+                    <details class="group bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer">
+                        <summary class="flex justify-between items-center font-bold text-slate-900 dark:text-white">
+                            <span>Is this tool free to use?</span>
+                            <span class="transform transition-transform group-open:rotate-180">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </span>
+                        </summary>
+                        <p class="text-slate-600 dark:text-slate-300 mt-4 leading-relaxed">
+                            Yes, Age Calculator Pro is 100% free, runs directly in your browser, and requires no downloads or registration.
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </article>
 
       </main>
-
-      <!-- Footer -->
-      <footer class="mt-12 text-center text-sm text-slate-500 dark:text-slate-400 space-y-4 pb-20">
-        <p>&copy; 2024 Age Calculator Pro. All rights reserved.</p>
-        <p class="text-xs">Using highly accurate date algorithms. Results may vary slightly based on time zones.</p>
-        
-        <!-- Footer Links -->
-        <div class="flex flex-wrap justify-center gap-4 text-xs mt-4">
-            <a href="about.html" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">About Us</a>
-            <a href="contact.html" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Contact Us</a>
-            <a href="privacy.html" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Privacy Policy</a>
-            <a href="terms.html" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Terms & Conditions</a>
-        </div>
-      </footer>
     </div>
+
+    <!-- COMPLIANT FOOTER -->
+    <footer class="bg-slate-900 text-slate-300 py-12 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <!-- Footer Brand -->
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">Age Calculator</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        The most accurate and free online age calculator. Calculate your chronological age in seconds.
+                    </p>
+                </div>
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-white text-sm font-bold uppercase tracking-wider mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="about.html" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="contact.html" class="hover:text-white transition-colors">Contact Us</a></li>
+                    </ul>
+                </div>
+                <!-- Legal -->
+                <div>
+                    <h4 class="text-white text-sm font-bold uppercase tracking-wider mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="privacy.html" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="terms.html" class="hover:text-white transition-colors">Terms & Conditions</a></li>
+                        <li><a href="disclaimer.html" class="hover:text-white transition-colors">Disclaimer</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-slate-500">
+                    &copy; 2026 Age Calculator. All rights reserved.
+                </p>
+                <div class="flex space-x-6">
+                    <!-- Social Icons or other links could go here -->
+                </div>
+            </div>
+        </div>
+    </footer>
     
     <script>
+        // --- LOGIC ---
+        
         // Utils
-        const getDayOfWeek = (date) => {
-          return date.toLocaleDateString('en-US', { weekday: 'long' });
-        };
+        const getDayOfWeek = (date) => date.toLocaleDateString('en-US', { weekday: 'long' });
 
         const getZodiacSign = (date) => {
           const day = date.getDate();
-          const month = date.getMonth() + 1; // 1-12
-
-          if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return { name: "Aquarius", symbol: "♒", dateRange: "Jan 20 - Feb 18" };
-          if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return { name: "Pisces", symbol: "♓", dateRange: "Feb 19 - Mar 20" };
-          if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return { name: "Aries", symbol: "♈", dateRange: "Mar 21 - Apr 19" };
-          if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return { name: "Taurus", symbol: "♉", dateRange: "Apr 20 - May 20" };
-          if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return { name: "Gemini", symbol: "♊", dateRange: "May 21 - Jun 20" };
-          if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return { name: "Cancer", symbol: "♋", dateRange: "Jun 21 - Jul 22" };
-          if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return { name: "Leo", symbol: "♌", dateRange: "Jul 23 - Aug 22" };
-          if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return { name: "Virgo", symbol: "♍", dateRange: "Aug 23 - Sep 22" };
-          if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return { name: "Libra", symbol: "♎", dateRange: "Sep 23 - Oct 22" };
-          if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return { name: "Scorpio", symbol: "♏", dateRange: "Oct 23 - Nov 21" };
-          if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return { name: "Sagittarius", symbol: "♐", dateRange: "Nov 22 - Dec 21" };
-          return { name: "Capricorn", symbol: "♑", dateRange: "Dec 22 - Jan 19" };
+          const month = date.getMonth() + 1;
+          if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return { name: "Aquarius", symbol: "♒" };
+          if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return { name: "Pisces", symbol: "♓" };
+          if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return { name: "Aries", symbol: "♈" };
+          if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return { name: "Taurus", symbol: "♉" };
+          if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return { name: "Gemini", symbol: "♊" };
+          if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return { name: "Cancer", symbol: "♋" };
+          if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return { name: "Leo", symbol: "♌" };
+          if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return { name: "Virgo", symbol: "♍" };
+          if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return { name: "Libra", symbol: "♎" };
+          if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return { name: "Scorpio", symbol: "♏" };
+          if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return { name: "Sagittarius", symbol: "♐" };
+          return { name: "Capricorn", symbol: "♑" };
         };
 
         const calculateAge = (dob, tob = "00:00") => {
           const now = new Date();
-          
-          // Parse TOB
           const [hours, minutes] = tob.split(':').map(Number);
-          const dobDate = new Date(dob); // clone
+          const dobDate = new Date(dob);
           dobDate.setHours(hours || 0, minutes || 0, 0, 0);
 
           const diffTime = now.getTime() - dobDate.getTime();
           
-          // Basic Stats
           const totalSeconds = Math.floor(diffTime / 1000);
           const totalMinutes = Math.floor(totalSeconds / 60);
           const totalHours = Math.floor(totalMinutes / 60);
@@ -321,7 +495,6 @@
           const totalWeeks = Math.floor(totalDays / 7);
           const totalMonths = (now.getFullYear() - dobDate.getFullYear()) * 12 + (now.getMonth() - dobDate.getMonth());
 
-          // Exact Age Calculation
           let years = now.getFullYear() - dobDate.getFullYear();
           let m = now.getMonth() - dobDate.getMonth();
           let d = now.getDate() - dobDate.getDate();
@@ -336,7 +509,6 @@
               m += 12;
           }
 
-          // Next Birthday
           const nextBirthdayDate = new Date(now.getFullYear(), dobDate.getMonth(), dobDate.getDate(), hours, minutes);
           if (now > nextBirthdayDate) {
             nextBirthdayDate.setFullYear(now.getFullYear() + 1);
@@ -349,139 +521,78 @@
           const nbDays = Math.floor(nbHours / 24);
 
           return {
-            age: {
-              years,
-              months: m,
-              days: d,
-              totalMonths,
-              totalWeeks,
-              totalDays,
-              totalHours,
-              totalMinutes,
-              totalSeconds
-            },
-            nextBirthday: {
-              days: nbDays,
-              hours: nbHours % 24,
-              minutes: nbMinutes % 60,
-              seconds: nbSeconds % 60,
-              date: nextBirthdayDate
-            },
+            age: { years, months: m, days: d, totalMonths, totalWeeks, totalDays, totalHours, totalMinutes, totalSeconds },
+            nextBirthday: { days: nbDays, hours: nbHours % 24, minutes: nbMinutes % 60, seconds: nbSeconds % 60, date: nextBirthdayDate },
             zodiac: getZodiacSign(dobDate),
-            dayOfBirth: getDayOfWeek(dobDate),
-            dateOfBirth: dobDate
+            dayOfBirth: getDayOfWeek(dobDate)
           };
         };
 
-        // Main Logic
+        // --- DOM MANIPULATION ---
         document.addEventListener('DOMContentLoaded', () => {
-            // DOM Elements
             const dobInput = document.getElementById('dob-input');
             const tobInput = document.getElementById('tob-input');
             const form = document.getElementById('age-form');
             const resultContainer = document.getElementById('result-container');
             const introText = document.getElementById('intro-text');
             const themeToggle = document.getElementById('theme-toggle');
+            const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
             const iconSun = document.getElementById('icon-sun');
             const iconMoon = document.getElementById('icon-moon');
             const btnCopy = document.getElementById('btn-copy');
             const customMessageInput = document.getElementById('custom-message');
+            
+            // Mobile Menu Logic
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            hamburgerBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('open');
+            });
 
             // State
             let timerInterval = null;
             let currentDob = null;
             let currentTob = "00:00";
 
-            // Set max date to today
-            if (dobInput) {
-                dobInput.max = new Date().toISOString().split('T')[0];
-            }
+            if (dobInput) dobInput.max = new Date().toISOString().split('T')[0];
 
-            // Dark Mode Logic
+            // Dark Mode
             const updateTheme = (isDark) => {
+                const root = document.documentElement;
                 if (isDark) {
-                    document.documentElement.classList.add('dark');
-                    iconSun && iconSun.classList.remove('hidden');
-                    iconMoon && iconMoon.classList.add('hidden');
+                    root.classList.add('dark');
+                    iconSun?.classList.remove('hidden');
+                    iconMoon?.classList.add('hidden');
+                    // Mobile icons
+                    document.querySelectorAll('.sun-icon').forEach(el => el.classList.remove('hidden'));
+                    document.querySelectorAll('.moon-icon').forEach(el => el.classList.add('hidden'));
                 } else {
-                    document.documentElement.classList.remove('dark');
-                    iconSun && iconSun.classList.add('hidden');
-                    iconMoon && iconMoon.classList.remove('hidden');
+                    root.classList.remove('dark');
+                    iconSun?.classList.add('hidden');
+                    iconMoon?.classList.remove('hidden');
+                    document.querySelectorAll('.sun-icon').forEach(el => el.classList.add('hidden'));
+                    document.querySelectorAll('.moon-icon').forEach(el => el.classList.remove('hidden'));
                 }
             };
 
-            // Check system preference
-            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            let isDarkMode = localStorage.theme === 'dark' || (!('theme' in localStorage) && systemDark);
+            let isDarkMode = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
             updateTheme(isDarkMode);
 
-            if (themeToggle) {
-                themeToggle.addEventListener('click', () => {
-                    isDarkMode = !isDarkMode;
-                    localStorage.theme = isDarkMode ? 'dark' : 'light';
-                    updateTheme(isDarkMode);
-                });
+            const toggleTheme = () => {
+                isDarkMode = !isDarkMode;
+                localStorage.theme = isDarkMode ? 'dark' : 'light';
+                updateTheme(isDarkMode);
             }
 
-            // Helper to safely set text content
+            if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+            if (mobileThemeToggle) mobileThemeToggle.addEventListener('click', toggleTheme);
+
             const setText = (id, value) => {
                 const el = document.getElementById(id);
-                if (el) {
-                    el.textContent = value;
-                }
+                if (el) el.textContent = value;
             };
 
-            // Helper: Show Feedback on Button
-            const showFeedback = (btn, message = "Copied!") => {
-                const originalContent = btn.innerHTML;
-                if (btn.getAttribute('data-feedback') === 'true') return;
-                
-                btn.setAttribute('data-feedback', 'true');
-                btn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>${message}</span>
-                `;
-                
-                setTimeout(() => {
-                    btn.innerHTML = originalContent;
-                    btn.removeAttribute('data-feedback');
-                }, 2000);
-            };
-
-            // Helper: Copy to Clipboard
-            const copyToClipboard = (text, btnElement) => {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                     navigator.clipboard.writeText(text).then(() => {
-                        if (btnElement) showFeedback(btnElement, "Copied!");
-                    }).catch(err => {
-                        console.warn('Async: Could not copy text: ', err);
-                        fallbackCopy(text, btnElement);
-                    });
-                } else {
-                    fallbackCopy(text, btnElement);
-                }
-            };
-
-            const fallbackCopy = (text, btnElement) => {
-                const textArea = document.createElement("textarea");
-                textArea.value = text;
-                textArea.style.position = "absolute";
-                textArea.style.left = "-9999px";
-                textArea.style.top = "0";
-                textArea.setAttribute("readonly", ""); 
-                document.body.appendChild(textArea);
-                try {
-                    textArea.focus();
-                    textArea.select();
-                    document.execCommand('copy');
-                    if (btnElement) showFeedback(btnElement, "Copied!");
-                } catch (err) {
-                    console.warn('Fallback: Oops, unable to copy', err);
-                }
-                document.body.removeChild(textArea);
-            }
-
-            // Calculate and Update UI
             const updateUI = (result) => {
                 setText('years-val', result.age.years);
                 setText('months-val', result.age.months);
@@ -496,9 +607,7 @@
                 setText('nb-secs', result.nextBirthday.seconds);
                 
                 const nbDate = document.getElementById('nb-date');
-                if (nbDate) {
-                    nbDate.textContent = result.nextBirthday.date.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                }
+                if (nbDate) nbDate.textContent = result.nextBirthday.date.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
                 setText('zodiac-symbol', result.zodiac.symbol);
                 setText('zodiac-name', result.zodiac.name);
@@ -511,26 +620,20 @@
                 if (timerInterval) clearInterval(timerInterval);
                 if (!currentDob) return;
 
+                const run = () => {
+                    if (currentDob) updateUI(calculateAge(new Date(currentDob), currentTob));
+                };
+                
                 const result = calculateAge(new Date(currentDob), currentTob);
                 updateUI(result);
-
-                if (customMessageInput) {
-                    const defaultMsg = `I am exactly ${result.age.years} years, ${result.age.months} months, and ${result.age.days} days old.`;
-                    // Only update if it's the default format or empty
-                    if (!customMessageInput.value || customMessageInput.value.startsWith("I am exactly")) {
-                         customMessageInput.value = defaultMsg;
-                    }
+                
+                if (customMessageInput && (!customMessageInput.value || customMessageInput.value.startsWith("I am exactly"))) {
+                     customMessageInput.value = `I am exactly ${result.age.years} years, ${result.age.months} months, and ${result.age.days} days old.`;
                 }
 
-                timerInterval = window.setInterval(() => {
-                    if (currentDob) {
-                        const res = calculateAge(new Date(currentDob), currentTob);
-                        updateUI(res);
-                    }
-                }, 1000);
+                timerInterval = window.setInterval(run, 1000);
             };
 
-            // Form Submit
             if (form) {
                 form.addEventListener('submit', (e) => {
                     e.preventDefault();
@@ -543,27 +646,19 @@
                     if (resultContainer) {
                         resultContainer.classList.remove('hidden');
                         resultContainer.classList.add('fade-in');
-                        setTimeout(() => {
-                            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 100);
+                        setTimeout(() => resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
                     }
                     startTimer();
                 });
             }
 
-            // Copy Button Logic
             if (btnCopy) {
                 btnCopy.addEventListener('click', () => {
-                    let text = "";
-                    if (customMessageInput && customMessageInput.value) {
-                        text = customMessageInput.value;
-                    } else {
-                        const years = document.getElementById('years-val')?.textContent || '';
-                        const months = document.getElementById('months-val')?.textContent || '';
-                        const days = document.getElementById('days-val')?.textContent || '';
-                        text = `I am exactly ${years} years, ${months} months, and ${days} days old.`;
-                    }
-                    copyToClipboard(text, btnCopy);
+                    const text = customMessageInput?.value || document.getElementById('years-val')?.textContent || '';
+                    if (navigator.clipboard) navigator.clipboard.writeText(text);
+                    const original = btnCopy.innerHTML;
+                    btnCopy.innerHTML = `<span>Copied!</span>`;
+                    setTimeout(() => btnCopy.innerHTML = original, 2000);
                 });
             }
         });
