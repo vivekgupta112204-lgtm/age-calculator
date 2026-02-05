@@ -27,8 +27,7 @@
         }
       }
     </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2014274337287264"
-     crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2014274337287264" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -617,9 +616,11 @@
             const hamburgerBtn = document.getElementById('hamburger-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             
-            hamburgerBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('open');
-            });
+            if (hamburgerBtn) {
+              hamburgerBtn.addEventListener('click', () => {
+                  if (mobileMenu) mobileMenu.classList.toggle('open');
+              });
+            }
 
             // State
             let timerInterval = null;
@@ -633,15 +634,15 @@
                 const root = document.documentElement;
                 if (isDark) {
                     root.classList.add('dark');
-                    iconSun?.classList.remove('hidden');
-                    iconMoon?.classList.add('hidden');
+                    if (iconSun) iconSun.classList.remove('hidden');
+                    if (iconMoon) iconMoon.classList.add('hidden');
                     // Mobile icons
                     document.querySelectorAll('.sun-icon').forEach(el => el.classList.remove('hidden'));
                     document.querySelectorAll('.moon-icon').forEach(el => el.classList.add('hidden'));
                 } else {
                     root.classList.remove('dark');
-                    iconSun?.classList.add('hidden');
-                    iconMoon?.classList.remove('hidden');
+                    if (iconSun) iconSun.classList.add('hidden');
+                    if (iconMoon) iconMoon.classList.remove('hidden');
                     document.querySelectorAll('.sun-icon').forEach(el => el.classList.add('hidden'));
                     document.querySelectorAll('.moon-icon').forEach(el => el.classList.remove('hidden'));
                 }
@@ -736,13 +737,3 @@
     </script>
   </body>
 </html>
-```
-
-```xml
-<change>
-    <file>ads.txt</file>
-    <description>Clean up ads.txt to remove HTML script tag and keep only plain text.</description>
-    <content><![CDATA[google.com, pub-2014274337287264, DIRECT, f08c47fec0942fa0]]></content>
-</change>
-</changes>
-```
